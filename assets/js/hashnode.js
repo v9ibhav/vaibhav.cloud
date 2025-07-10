@@ -9,7 +9,7 @@ class HashnodeBlog {
     const query = `
       query GetUserArticles($page: Int!) {
         user(username: "vaibhavkatiyar") {
-          publication {
+          publications {
             posts(page: $page) {
               title
               brief
@@ -43,6 +43,7 @@ class HashnodeBlog {
       }
 
       return data.data?.user?.publication?.posts || [];
+      return data.data?.user?.publications?.posts || [];
     } catch (error) {
       console.error('Error fetching Hashnode posts:', error);
       return [];
