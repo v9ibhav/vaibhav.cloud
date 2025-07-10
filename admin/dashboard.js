@@ -63,6 +63,32 @@ function initializeStorage() {
             ]
         }));
     }
+    if (!localStorage.getItem('servicesData')) {
+        localStorage.setItem('servicesData', JSON.stringify({
+            services: [
+                {
+                    title: 'Web design',
+                    description: 'The most modern and high-quality design made at a professional level.',
+                    icon: './assets/images/icon-design.svg'
+                },
+                {
+                    title: 'Web development',
+                    description: 'High-quality development of sites at the professional level.',
+                    icon: './assets/images/icon-dev.svg'
+                },
+                {
+                    title: 'Mobile apps',
+                    description: 'Professional development of applications for iOS and Android.',
+                    icon: './assets/images/icon-app.svg'
+                },
+                {
+                    title: 'Photography',
+                    description: 'I make high-quality photos of any category at a professional level.',
+                    icon: './assets/images/icon-photo.svg'
+                }
+            ]
+        }));
+    }
 }
 
 // Blog Management
@@ -290,6 +316,57 @@ function removeExperience(index) {
     loadSkillsData();
 }
 
+// Services Management
+function loadServicesData() {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    const servicesList = document.getElementById('servicesList');
+    
+    const services = servicesData.services || [];
+    
+    servicesList.innerHTML = services.map((service, index) => `
+        <div class="service-item-container">
+            <h4>Service ${index + 1}</h4>
+            <div class="form-group">
+                <label>Service Title</label>
+                <input type="text" name="serviceTitle_${index}" value="${service.title}" required>
+            </div>
+            <div class="form-group">
+                <label>Service Description</label>
+                <textarea name="serviceDescription_${index}" required>${service.description}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Icon Path</label>
+                <input type="text" name="serviceIcon_${index}" value="${service.icon}" required>
+                <small style="color: var(--light-gray-70); font-size: var(--fs-7); margin-top: 5px; display: block;">
+                    Available icons: ./assets/images/icon-design.svg, ./assets/images/icon-dev.svg, ./assets/images/icon-app.svg, ./assets/images/icon-photo.svg
+                </small>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeService(${index})">Remove Service</button>
+        </div>
+    `).join('');
+}
+
+function addService() {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    if (!servicesData.services) servicesData.services = [];
+    
+    servicesData.services.push({
+        title: 'New Service',
+        description: 'Description of the new service.',
+        icon: './assets/images/icon-design.svg'
+    });
+    
+    localStorage.setItem('servicesData', JSON.stringify(servicesData));
+    loadServicesData();
+}
+
+function removeService(index) {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    servicesData.services.splice(index, 1);
+    localStorage.setItem('servicesData', JSON.stringify(servicesData));
+    loadServicesData();
+}
+
 // Utility functions
 function showSuccessMessage(elementId) {
     const element = document.getElementById(elementId);
@@ -348,6 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlogPosts();
     loadPortfolioData();
     loadSkillsData();
+    loadServicesData();
     loadResumeData();
     
     // Blog form submission
@@ -439,6 +517,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         localStorage.setItem('skillsData', JSON.stringify(skillsData));
         showSuccessMessage('skillsSuccess');
+    });
+    
+    // Services form submission
+    document.getElementById('servicesForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const servicesData = { services: [] };
+        
+        // Collect services data
+        let serviceIndex = 0;
+        while (formData.get(`serviceTitle_${serviceIndex}`) !== null) {
+            servicesData.services.push({
+                title: formData.get(`serviceTitle_${serviceIndex}`),
+                description: formData.get(`serviceDescription_${serviceIndex}`),
+                icon: formData.get(`serviceIcon_${serviceIndex}`)
+            });
+            serviceIndex++;
+        }
+        
+        localStorage.setItem('servicesData', JSON.stringify(servicesData));
+        showSuccessMessage('servicesSuccess');
     });
     
     // Password form submission

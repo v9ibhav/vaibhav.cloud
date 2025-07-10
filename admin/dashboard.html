@@ -587,6 +587,7 @@
             <button class="tab-btn" onclick="showTab('portfolio')">Portfolio Settings</button>
             <button class="tab-btn" onclick="showTab('personal')">Personal Info</button>
             <button class="tab-btn" onclick="showTab('skills')">Skills & Experience</button>
+            <button class="tab-btn" onclick="showTab('services')">Services</button>
             <button class="tab-btn" onclick="showTab('resume')">Resume Upload</button>
             <button class="tab-btn" onclick="showTab('security')">Security Settings</button>
         </div>
@@ -740,6 +741,22 @@
                 
                 <br><br>
                 <button type="submit" class="btn">Save Skills & Experience</button>
+            </form>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="services" class="tab-content">
+            <h2>Services Management</h2>
+            <div class="success-message" id="servicesSuccess">Services updated successfully!</div>
+            
+            <form id="servicesForm">
+                <h3>What I'm Doing Section</h3>
+                <div id="servicesList">
+                    <!-- Services will be loaded here -->
+                </div>
+                <button type="button" class="btn" onclick="addService()">Add New Service</button>
+                <br><br>
+                <button type="submit" class="btn">Save Services</button>
             </form>
         </div>
 

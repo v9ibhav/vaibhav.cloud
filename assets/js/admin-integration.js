@@ -7,6 +7,7 @@ class AdminDataLoader {
         this.loadPersonalData();
         this.loadPortfolioData();
         this.loadSkillsData();
+        this.loadServicesData();
     }
 
     loadBlogPosts() {
@@ -179,6 +180,27 @@ class AdminDataLoader {
                 `).join('');
             }
         }
+    }
+
+    loadServicesData() {
+        const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+        const servicesList = document.querySelector('.service-list');
+        
+        if (!servicesList || !servicesData.services) {
+            return;
+        }
+
+        servicesList.innerHTML = servicesData.services.map(service => `
+            <li class="service-item">
+                <div class="service-icon-box">
+                    <img src="${service.icon}" alt="${service.title} icon" width="40">
+                </div>
+                <div class="service-content-box">
+                    <h4 class="h4 service-item-title">${service.title}</h4>
+                    <p class="service-item-text">${service.description}</p>
+                </div>
+            </li>
+        `).join('');
     }
 
     formatDate(dateString) {
