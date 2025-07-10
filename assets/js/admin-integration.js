@@ -1,344 +1,733 @@
-// Admin Integration for Main Website
-// This file handles loading data from admin panel to the main website
+// Check authentication
+if (localStorage.getItem('adminLoggedIn') !== 'true') {
+    window.location.href = 'index.html';
+}
 
-class AdminDataLoader {
-    constructor() {
-        this.loadBlogPosts();
-        this.loadPersonalData();
-        this.loadPortfolioData();
-        this.loadSkillsData();
-        this.loadServicesData();
+// Tab functionality
+function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all tab buttons
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked tab button
+    event.target.classList.add('active');
+}
+
+// Logout functionality
+function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    window.location.href = 'index.html';
+}
+
+// Initialize data storage
+function initializeStorage() {
+    // Initialize admin password if not set
+    if (!localStorage.getItem('adminPassword')) {
+        localStorage.setItem('adminPassword', 'Uvuvuv@49');
     }
-
-    loadBlogPosts() {
-        const blogPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
-        const blogPostsList = document.querySelector('.blog-posts-list');
-        
-        if (!blogPostsList || blogPosts.length === 0) {
-            return;
-        }
-
-        blogPostsList.innerHTML = blogPosts.map(post => `
-            <li class="blog-post-item">
-                <a href="#" onclick="openBlogPost('${post.id}')">
-                    <figure class="blog-banner-box">
-                        <img src="${post.image}" alt="${post.title}" loading="lazy" onerror="this.src='./assets/images/blog-1.jpg'">
-                    </figure>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <p class="blog-category">${post.category}</p>
-                            <span class="dot"></span>
-                            <time datetime="${post.dateAdded}">${this.formatDate(post.dateAdded)}</time>
-                        </div>
-                        <h3 class="h3 blog-item-title">${post.title}</h3>
-                        <p class="blog-text">${post.description}</p>
-                    </div>
-                </a>
-            </li>
-        `).join('');
+    
+    if (!localStorage.getItem('blogPosts')) {
+        localStorage.setItem('blogPosts', JSON.stringify([]));
     }
-
-    loadPersonalData() {
-        const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
-        
-        // Update name
-        if (personalData.fullName) {
-            const nameElement = document.querySelector('.name');
-            if (nameElement) nameElement.textContent = personalData.fullName;
-        }
-
-        // Update title
-        if (personalData.title) {
-            const titleElement = document.querySelector('.title');
-            if (titleElement) titleElement.textContent = personalData.title;
-        }
-
-        // Update contact info
-        if (personalData.email) {
-            const emailLink = document.querySelector('a[href^="mailto:"]');
-            if (emailLink) {
-                emailLink.href = `mailto:${personalData.email}`;
-                emailLink.textContent = personalData.email;
-            }
-        }
-
-        if (personalData.phone) {
-            const phoneLink = document.querySelector('a[href^="tel:"]');
-            if (phoneLink) {
-                phoneLink.href = `tel:${personalData.phone}`;
-                phoneLink.textContent = personalData.phone;
-            }
-        }
-
-        if (personalData.birthday) {
-            const birthdayElement = document.querySelector('time[datetime]');
-            if (birthdayElement) {
-                birthdayElement.setAttribute('datetime', personalData.birthday);
-                birthdayElement.textContent = this.formatDate(personalData.birthday);
-            }
-        }
-
-        if (personalData.location) {
-            const locationElement = document.querySelector('address');
-            if (locationElement) locationElement.textContent = personalData.location;
-        }
-
-        // Update about text
-        if (personalData.aboutText) {
-            const aboutTextElements = document.querySelectorAll('.about-text p');
-            if (aboutTextElements.length > 0) {
-                aboutTextElements[0].textContent = personalData.aboutText;
-            }
-        }
-
-        // Update social links
-        if (personalData.linkedin) {
-            const linkedinLink = document.querySelector('a[href*="linkedin"]');
-            if (linkedinLink) linkedinLink.href = personalData.linkedin;
-        }
-
-        if (personalData.twitter) {
-            const twitterLink = document.querySelector('a[href*="twitter"], a[href*="x.com"]');
-            if (twitterLink) twitterLink.href = personalData.twitter;
-        }
-
-        if (personalData.instagram) {
-            const instagramLink = document.querySelector('a[href*="instagram"]');
-            if (instagramLink) instagramLink.href = personalData.instagram;
-        }
+    if (!localStorage.getItem('portfolioData')) {
+        localStorage.setItem('portfolioData', JSON.stringify({
+            projects: [
+                { title: 'Finance', category: 'Web development', image: './assets/images/project-1.jpg' },
+                { title: 'Orizon', category: 'Web development', image: './assets/images/project-2.png' },
+                { title: 'Fundo', category: 'Web design', image: './assets/images/project-3.jpg' }
+            ]
+        }));
     }
-
-    loadPortfolioData() {
-        const portfolioData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
-        const projectList = document.querySelector('.project-list');
-        
-        if (!projectList || !portfolioData.projects) {
-            return;
-        }
-
-        projectList.innerHTML = portfolioData.projects.map((project, index) => `
-            <li class="project-item active" data-filter-item data-category="${project.category.toLowerCase()}">
-                <a href="#">
-                    <figure class="project-img">
-                        <div class="project-item-icon-box">
-                            <ion-icon name="eye-outline"></ion-icon>
-                        </div>
-                        <img src="${project.image}" alt="${project.title}" loading="lazy">
-                    </figure>
-                    <h3 class="project-title">${project.title}</h3>
-                    <p class="project-category">${project.category}</p>
-                </a>
-            </li>
-        `).join('');
+    if (!localStorage.getItem('skillsData')) {
+        localStorage.setItem('skillsData', JSON.stringify({
+            skills: [
+                { name: 'Web design', percentage: 80 },
+                { name: 'Graphic design', percentage: 70 },
+                { name: 'Branding', percentage: 90 },
+                { name: 'WordPress', percentage: 50 }
+            ],
+            education: [
+                { institution: 'Harcourt Butler Technical University, Kanpur', period: '2024 - Present', description: '' },
+                { institution: 'Central Academy, Kota', period: '2022 - 2024', description: '' },
+                { institution: 'Jagran Public School, Kannauj', period: '2012-2022', description: '' }
+            ],
+            experience: [
+                { title: 'Front-End Developer', period: '2020 — Present', description: '' }
+            ]
+        }));
     }
-
-    loadSkillsData() {
-        const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
-        
-        // Load skills
-        if (skillsData.skills) {
-            const skillsList = document.querySelector('.skills-list');
-            if (skillsList) {
-                skillsList.innerHTML = skillsData.skills.map(skill => `
-                    <li class="skills-item">
-                        <div class="title-wrapper">
-                            <h5 class="h5">${skill.name}</h5>
-                            <data value="${skill.percentage}">${skill.percentage}%</data>
-                        </div>
-                        <div class="skill-progress-bg">
-                            <div class="skill-progress-fill" style="width: ${skill.percentage}%;"></div>
-                        </div>
-                    </li>
-                `).join('');
-            }
-        }
-
-        // Load education
-        if (skillsData.education) {
-            const educationList = document.querySelector('.timeline-list');
-            if (educationList) {
-                educationList.innerHTML = skillsData.education.map(edu => `
-                    <li class="timeline-item">
-                        <h4 class="h4 timeline-item-title">${edu.institution}</h4>
-                        <span>${edu.period}</span>
-                        <p class="timeline-text">${edu.description}</p>
-                    </li>
-                `).join('');
-            }
-        }
-
-        // Load experience
-        if (skillsData.experience) {
-            const experienceList = document.querySelectorAll('.timeline-list')[1];
-            if (experienceList) {
-                experienceList.innerHTML = skillsData.experience.map(exp => `
-                    <li class="timeline-item">
-                        <h4 class="h4 timeline-item-title">${exp.title}</h4>
-                        <span>${exp.period}</span>
-                        <p class="timeline-text">${exp.description}</p>
-                    </li>
-                `).join('');
-            }
-        }
-    }
-
-    loadServicesData() {
-        const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
-        const servicesList = document.querySelector('.service-list');
-        
-        if (!servicesList || !servicesData.services) {
-            return;
-        }
-
-        servicesList.innerHTML = servicesData.services.map(service => `
-            <li class="service-item">
-                <div class="service-icon-box">
-                    <img src="${service.icon}" alt="${service.title} icon" width="40">
-                </div>
-                <div class="service-content-box">
-                    <h4 class="h4 service-item-title">${service.title}</h4>
-                    <p class="service-item-text">${service.description}</p>
-                </div>
-            </li>
-        `).join('');
-    }
-
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        const options = { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        };
-        return date.toLocaleDateString('en-US', options);
+    if (!localStorage.getItem('servicesData')) {
+        localStorage.setItem('servicesData', JSON.stringify({
+            services: [
+                {
+                    title: 'Web design',
+                    description: 'The most modern and high-quality design made at a professional level.',
+                    icon: './assets/images/icon-design.svg'
+                },
+                {
+                    title: 'Web development',
+                    description: 'High-quality development of sites at the professional level.',
+                    icon: './assets/images/icon-dev.svg'
+                },
+                {
+                    title: 'Mobile apps',
+                    description: 'Professional development of applications for iOS and Android.',
+                    icon: './assets/images/icon-app.svg'
+                },
+                {
+                    title: 'Photography',
+                    description: 'I make high-quality photos of any category at a professional level.',
+                    icon: './assets/images/icon-photo.svg'
+                }
+            ]
+        }));
     }
 }
 
-// Blog post modal functionality
-function openBlogPost(postId) {
+// Blog Management
+function loadBlogPosts() {
     const blogPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
-    const post = blogPosts.find(p => p.id == postId);
+    const blogPostsContainer = document.getElementById('blogPosts');
     
-    if (!post) return;
-
-    // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'blog-modal';
-    modal.innerHTML = `
-        <div class="blog-modal-overlay" onclick="closeBlogModal()"></div>
-        <div class="blog-modal-content">
-            <button class="blog-modal-close" onclick="closeBlogModal()">&times;</button>
-            <img src="${post.image}" alt="${post.title}" class="blog-modal-image">
-            <div class="blog-modal-body">
-                <h2>${post.title}</h2>
-                <div class="blog-modal-meta">
-                    <span class="blog-modal-category">${post.category}</span>
-                    <span class="blog-modal-date">${new Date(post.dateAdded).toLocaleDateString()}</span>
-                </div>
-                <div class="blog-modal-content-text">
-                    ${post.content.replace(/\n/g, '<br>')}
-                </div>
+    if (blogPosts.length === 0) {
+        blogPostsContainer.innerHTML = '<p>No blog posts yet. Create your first post above!</p>';
+        return;
+    }
+    
+    blogPostsContainer.innerHTML = blogPosts.map((post, index) => `
+        <div class="blog-item">
+            <div class="blog-item-content">
+                <h3>${post.title}</h3>
+                <p>${post.description}</p>
+                <small>Created: ${new Date(post.dateAdded).toLocaleDateString()}</small>
+            </div>
+            <div class="blog-item-actions">
+                <button class="btn btn-small" onclick="editBlogPost(${index})">Edit</button>
+                <button class="btn btn-danger btn-small" onclick="deleteBlogPost(${index})">Delete</button>
             </div>
         </div>
-    `;
-
-    // Add modal styles
-    const style = document.createElement('style');
-    style.textContent = `
-        .blog-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .blog-modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-        }
-        .blog-modal-content {
-            position: relative;
-            background: var(--eerie-black-2);
-            border-radius: 20px;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            margin: 20px;
-            border: 1px solid var(--jet);
-        }
-        .blog-modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--onyx);
-            border: none;
-            color: var(--white-2);
-            font-size: 24px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1001;
-        }
-        .blog-modal-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 20px 20px 0 0;
-        }
-        .blog-modal-body {
-            padding: 30px;
-        }
-        .blog-modal-body h2 {
-            color: var(--white-2);
-            margin-bottom: 15px;
-            font-size: 28px;
-        }
-        .blog-modal-meta {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--jet);
-        }
-        .blog-modal-category {
-            background: var(--orange-yellow-crayola);
-            color: var(--smoky-black);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .blog-modal-date {
-            color: var(--light-gray-70);
-            font-size: 14px;
-        }
-        .blog-modal-content-text {
-            color: var(--light-gray);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-    `;
-    document.head.appendChild(style);
-    document.body.appendChild(modal);
+    `).join('');
 }
 
-function closeBlogModal() {
-    const modal = document.querySelector('.blog-modal');
-    if (modal) {
-        modal.remove();
+function saveBlogPost(formData) {
+    const blogPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+    const newPost = {
+        id: Date.now(),
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        image: formData.image || './assets/images/blog-1.jpg',
+        dateAdded: new Date().toISOString(),
+        category: 'Blog'
+    };
+    
+    blogPosts.unshift(newPost);
+    localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+    
+    // Update the main website
+    updateMainWebsiteBlog();
+    
+    showSuccessMessage('blogSuccess');
+    loadBlogPosts();
+}
+
+function deleteBlogPost(index) {
+    if (confirm('Are you sure you want to delete this blog post?')) {
+        const blogPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+        blogPosts.splice(index, 1);
+        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+        updateMainWebsiteBlog();
+        loadBlogPosts();
     }
 }
 
-// Initialize admin data loader when DOM is loaded
+// Portfolio Management
+function loadPortfolioData() {
+    const portfolioData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
+    const projectsList = document.getElementById('projectsList');
+    
+    const projects = portfolioData.projects || [];
+    
+    projectsList.innerHTML = projects.map((project, index) => `
+        <div class="project-item-container">
+            <h4>Project ${index + 1}</h4>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Project Title</label>
+                    <input type="text" name="projectTitle_${index}" value="${project.title}" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="projectCategory_${index}" required>
+                        <option value="Web development" ${project.category === 'Web development' ? 'selected' : ''}>Web development</option>
+                        <option value="Web design" ${project.category === 'Web design' ? 'selected' : ''}>Web design</option>
+                        <option value="Applications" ${project.category === 'Applications' ? 'selected' : ''}>Applications</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Project Image URL</label>
+                <input type="text" name="projectImage_${index}" value="${project.image}" required>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeProject(${index})">Remove Project</button>
+        </div>
+    `).join('');
+}
+
+function addProject() {
+    const portfolioData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
+    if (!portfolioData.projects) portfolioData.projects = [];
+    
+    portfolioData.projects.push({
+        title: 'New Project',
+        category: 'Web development',
+        image: './assets/images/project-1.jpg'
+    });
+    
+    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+    loadPortfolioData();
+}
+
+function removeProject(index) {
+    const portfolioData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
+    portfolioData.projects.splice(index, 1);
+    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+    loadPortfolioData();
+}
+
+// Skills Management
+function loadSkillsData() {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    
+    // Load skills
+    const skillsList = document.getElementById('skillsList');
+    const skills = skillsData.skills || [];
+    skillsList.innerHTML = skills.map((skill, index) => `
+        <div class="skill-item-container">
+            <div class="grid">
+                <div class="form-group">
+                    <label>Skill Name</label>
+                    <input type="text" name="skillName_${index}" value="${skill.name}" required>
+                </div>
+                <div class="form-group">
+                    <label>Percentage</label>
+                    <input type="number" name="skillPercentage_${index}" value="${skill.percentage}" min="0" max="100" required>
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeSkill(${index})">Remove</button>
+        </div>
+    `).join('');
+    
+    // Load education
+    const educationList = document.getElementById('educationList');
+    const education = skillsData.education || [];
+    educationList.innerHTML = education.map((edu, index) => `
+        <div class="education-item-container">
+            <div class="form-group">
+                <label>Institution</label>
+                <input type="text" name="eduInstitution_${index}" value="${edu.institution}" required>
+            </div>
+            <div class="form-group">
+                <label>Period</label>
+                <input type="text" name="eduPeriod_${index}" value="${edu.period}" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="eduDescription_${index}">${edu.description}</textarea>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeEducation(${index})">Remove</button>
+        </div>
+    `).join('');
+    
+    // Load experience
+    const experienceList = document.getElementById('experienceList');
+    const experience = skillsData.experience || [];
+    experienceList.innerHTML = experience.map((exp, index) => `
+        <div class="experience-item-container">
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="expTitle_${index}" value="${exp.title}" required>
+            </div>
+            <div class="form-group">
+                <label>Period</label>
+                <input type="text" name="expPeriod_${index}" value="${exp.period}" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="expDescription_${index}">${exp.description}</textarea>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeExperience(${index})">Remove</button>
+        </div>
+    `).join('');
+}
+
+function addSkill() {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    if (!skillsData.skills) skillsData.skills = [];
+    
+    skillsData.skills.push({ name: 'New Skill', percentage: 50 });
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+function addEducation() {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    if (!skillsData.education) skillsData.education = [];
+    
+    skillsData.education.push({ institution: 'New Institution', period: '2020-2024', description: '' });
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+function addExperience() {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    if (!skillsData.experience) skillsData.experience = [];
+    
+    skillsData.experience.push({ title: 'New Position', period: '2020-Present', description: '' });
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+function removeSkill(index) {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    skillsData.skills.splice(index, 1);
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+function removeEducation(index) {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    skillsData.education.splice(index, 1);
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+function removeExperience(index) {
+    const skillsData = JSON.parse(localStorage.getItem('skillsData') || '{}');
+    skillsData.experience.splice(index, 1);
+    localStorage.setItem('skillsData', JSON.stringify(skillsData));
+    loadSkillsData();
+}
+
+// Services Management
+function loadServicesData() {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    const servicesList = document.getElementById('servicesList');
+    
+    const services = servicesData.services || [];
+    
+    servicesList.innerHTML = services.map((service, index) => `
+        <div class="service-item-container">
+            <h4>Service ${index + 1}</h4>
+            <div class="form-group">
+                <label>Service Title</label>
+                <input type="text" name="serviceTitle_${index}" value="${service.title}" required>
+            </div>
+            <div class="form-group">
+                <label>Service Description</label>
+                <textarea name="serviceDescription_${index}" required>${service.description}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Icon Path</label>
+                <input type="text" name="serviceIcon_${index}" value="${service.icon}" required>
+                <small style="color: var(--light-gray-70); font-size: var(--fs-7); margin-top: 5px; display: block;">
+                    Available icons: ./assets/images/icon-design.svg, ./assets/images/icon-dev.svg, ./assets/images/icon-app.svg, ./assets/images/icon-photo.svg
+                </small>
+            </div>
+            <button type="button" class="btn btn-danger btn-small" onclick="removeService(${index})">Remove Service</button>
+        </div>
+    `).join('');
+}
+
+function addService() {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    if (!servicesData.services) servicesData.services = [];
+    
+    servicesData.services.push({
+        title: 'New Service',
+        description: 'Description of the new service.',
+        icon: './assets/images/icon-design.svg'
+    });
+    
+    localStorage.setItem('servicesData', JSON.stringify(servicesData));
+    loadServicesData();
+}
+
+function removeService(index) {
+    const servicesData = JSON.parse(localStorage.getItem('servicesData') || '{}');
+    servicesData.services.splice(index, 1);
+    localStorage.setItem('servicesData', JSON.stringify(servicesData));
+    loadServicesData();
+}
+
+// Resume Management Functions
+function loadResumeData() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    const currentResumeDiv = document.getElementById('currentResume');
+    
+    if (resumeData.filename && resumeData.data) {
+        currentResumeDiv.innerHTML = `
+            <div class="resume-info">
+                <h4>Current Resume</h4>
+                <div class="resume-details">
+                    <p><strong>Filename:</strong> ${resumeData.filename}</p>
+                    <p><strong>Size:</strong> ${resumeData.size}</p>
+                    <p><strong>Uploaded:</strong> ${new Date(resumeData.uploadDate).toLocaleDateString()}</p>
+                </div>
+                <div class="resume-actions">
+                    <button type="button" class="btn btn-small" onclick="previewResume()">Preview</button>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeResume()">Remove</button>
+                </div>
+            </div>
+        `;
+    } else {
+        currentResumeDiv.innerHTML = '<p>No resume uploaded yet.</p>';
+    }
+}
+
+function saveResume(file) {
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+        showErrorMessage('resumeError', 'Please upload a PDF file only.');
+        return false;
+    }
+    
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        showErrorMessage('resumeError', 'File size must be less than 5MB.');
+        return false;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const resumeData = {
+            filename: file.name,
+            size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+            data: e.target.result,
+            uploadDate: new Date().toISOString()
+        };
+        
+        localStorage.setItem('resumeData', JSON.stringify(resumeData));
+        showSuccessMessage('resumeSuccess');
+        loadResumeData();
+    };
+    
+    reader.readAsDataURL(file);
+    return true;
+}
+
+function previewResume() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    
+    if (resumeData.data) {
+        const newWindow = window.open();
+        newWindow.document.write(`
+            <html>
+                <head><title>Resume Preview</title></head>
+                <body style="margin:0;">
+                    <embed src="${resumeData.data}" type="application/pdf" width="100%" height="100%">
+                </body>
+            </html>
+        `);
+    } else {
+        alert('No resume available to preview.');
+    }
+}
+
+function removeResume() {
+    if (confirm('Are you sure you want to remove the current resume?')) {
+        localStorage.removeItem('resumeData');
+        loadResumeData();
+        showSuccessMessage('resumeSuccess');
+    }
+}
+
+// Resume Management Functions
+function loadResumeData() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    const currentResumeDiv = document.getElementById('currentResume');
+    
+    if (resumeData.filename && resumeData.data) {
+        currentResumeDiv.innerHTML = `
+            <div class="resume-info">
+                <h4>Current Resume</h4>
+                <div class="resume-details">
+                    <p><strong>Filename:</strong> ${resumeData.filename}</p>
+                    <p><strong>Size:</strong> ${resumeData.size}</p>
+                    <p><strong>Uploaded:</strong> ${new Date(resumeData.uploadDate).toLocaleDateString()}</p>
+                </div>
+                <div class="resume-actions">
+                    <button type="button" class="btn btn-small" onclick="previewResume()">Preview</button>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeResume()">Remove</button>
+                </div>
+            </div>
+        `;
+    } else {
+        currentResumeDiv.innerHTML = '<p>No resume uploaded yet.</p>';
+    }
+}
+
+function saveResume(file) {
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+        showErrorMessage('resumeError', 'Please upload a PDF file only.');
+        return false;
+    }
+    
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        showErrorMessage('resumeError', 'File size must be less than 5MB.');
+        return false;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const resumeData = {
+            filename: file.name,
+            size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+            data: e.target.result,
+            uploadDate: new Date().toISOString()
+        };
+        
+        localStorage.setItem('resumeData', JSON.stringify(resumeData));
+        showSuccessMessage('resumeSuccess');
+        loadResumeData();
+    };
+    
+    reader.readAsDataURL(file);
+    return true;
+}
+
+function previewResume() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    
+    if (resumeData.data) {
+        const newWindow = window.open();
+        newWindow.document.write(`
+            <html>
+                <head><title>Resume Preview</title></head>
+                <body style="margin:0;">
+                    <embed src="${resumeData.data}" type="application/pdf" width="100%" height="100%">
+                </body>
+            </html>
+        `);
+    } else {
+        alert('No resume available to preview.');
+    }
+}
+
+function removeResume() {
+    if (confirm('Are you sure you want to remove the current resume?')) {
+        localStorage.removeItem('resumeData');
+        loadResumeData();
+        showSuccessMessage('resumeSuccess');
+    }
+}
+
+// Utility functions
+function showSuccessMessage(elementId) {
+    const element = document.getElementById(elementId);
+    element.style.display = 'block';
+    setTimeout(() => {
+        element.style.display = 'none';
+    }, 3000);
+}
+
+function showErrorMessage(elementId, message) {
+    const element = document.getElementById(elementId);
+    element.textContent = message;
+    element.style.display = 'block';
+    setTimeout(() => {
+        element.style.display = 'none';
+    }, 5000);
+}
+
+function changePassword(currentPassword, newPassword, confirmPassword) {
+    const storedPassword = localStorage.getItem('adminPassword');
+    
+    // Validate current password
+    if (currentPassword !== storedPassword) {
+        showErrorMessage('passwordError', 'Current password is incorrect.');
+        return false;
+    }
+    
+    // Validate new password
+    if (newPassword.length < 6) {
+        showErrorMessage('passwordError', 'New password must be at least 6 characters long.');
+        return false;
+    }
+    
+    // Validate password confirmation
+    if (newPassword !== confirmPassword) {
+        showErrorMessage('passwordError', 'New password and confirmation do not match.');
+        return false;
+    }
+    
+    // Save new password
+    localStorage.setItem('adminPassword', newPassword);
+    showSuccessMessage('securitySuccess');
+    return true;
+}
+
+function updateMainWebsiteBlog() {
+    // This function would update the main website's blog section
+    // For now, we'll just store the data in localStorage
+    // In a real implementation, this would make an API call
+    console.log('Blog updated on main website');
+}
+
+// Form event listeners
 document.addEventListener('DOMContentLoaded', function() {
-    new AdminDataLoader();
+    initializeStorage();
+    loadBlogPosts();
+    loadPortfolioData();
+    loadSkillsData();
+    loadServicesData();
+    loadResumeData();
+    
+    // Blog form submission
+    document.getElementById('blogForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const blogData = {
+            title: formData.get('title'),
+            description: formData.get('description'),
+            content: formData.get('content'),
+            image: formData.get('image') ? URL.createObjectURL(formData.get('image')) : null
+        };
+        saveBlogPost(blogData);
+        this.reset();
+    });
+    
+    // Portfolio form submission
+    document.getElementById('portfolioForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const portfolioData = { projects: [] };
+        
+        // Collect project data
+        let projectIndex = 0;
+        while (formData.get(`projectTitle_${projectIndex}`) !== null) {
+            portfolioData.projects.push({
+                title: formData.get(`projectTitle_${projectIndex}`),
+                category: formData.get(`projectCategory_${projectIndex}`),
+                image: formData.get(`projectImage_${projectIndex}`)
+            });
+            projectIndex++;
+        }
+        
+        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        showSuccessMessage('portfolioSuccess');
+    });
+    
+    // Personal form submission
+    document.getElementById('personalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const personalData = {};
+        
+        for (let [key, value] of formData.entries()) {
+            personalData[key] = value;
+        }
+        
+        localStorage.setItem('personalData', JSON.stringify(personalData));
+        showSuccessMessage('personalSuccess');
+    });
+    
+    // Skills form submission
+    document.getElementById('skillsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const skillsData = { skills: [], education: [], experience: [] };
+        
+        // Collect skills data
+        let skillIndex = 0;
+        while (formData.get(`skillName_${skillIndex}`) !== null) {
+            skillsData.skills.push({
+                name: formData.get(`skillName_${skillIndex}`),
+                percentage: parseInt(formData.get(`skillPercentage_${skillIndex}`))
+            });
+            skillIndex++;
+        }
+        
+        // Collect education data
+        let eduIndex = 0;
+        while (formData.get(`eduInstitution_${eduIndex}`) !== null) {
+            skillsData.education.push({
+                institution: formData.get(`eduInstitution_${eduIndex}`),
+                period: formData.get(`eduPeriod_${eduIndex}`),
+                description: formData.get(`eduDescription_${eduIndex}`)
+            });
+            eduIndex++;
+        }
+        
+        // Collect experience data
+        let expIndex = 0;
+        while (formData.get(`expTitle_${expIndex}`) !== null) {
+            skillsData.experience.push({
+                title: formData.get(`expTitle_${expIndex}`),
+                period: formData.get(`expPeriod_${expIndex}`),
+                description: formData.get(`expDescription_${expIndex}`)
+            });
+            expIndex++;
+        }
+        
+        localStorage.setItem('skillsData', JSON.stringify(skillsData));
+        showSuccessMessage('skillsSuccess');
+    });
+    
+    // Services form submission
+    document.getElementById('servicesForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const servicesData = { services: [] };
+        
+        // Collect services data
+        let serviceIndex = 0;
+        while (formData.get(`serviceTitle_${serviceIndex}`) !== null) {
+            servicesData.services.push({
+                title: formData.get(`serviceTitle_${serviceIndex}`),
+                description: formData.get(`serviceDescription_${serviceIndex}`),
+                icon: formData.get(`serviceIcon_${serviceIndex}`)
+            });
+            serviceIndex++;
+        }
+        
+        localStorage.setItem('servicesData', JSON.stringify(servicesData));
+        showSuccessMessage('servicesSuccess');
+    });
+    
+    // Password form submission
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        const currentPassword = formData.get('currentPassword');
+        const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
+        
+        if (changePassword(currentPassword, newPassword, confirmPassword)) {
+            this.reset();
+        }
+    });
 });
+    // Resume form submission
+    document.getElementById('resumeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('resumeFile');
+        const file = fileInput.files[0];
+        
+        if (file) {
+            if (saveResume(file)) {
+                this.reset();
+            }
+        }
+    });
+    

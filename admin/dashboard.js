@@ -367,6 +367,88 @@ function removeService(index) {
     loadServicesData();
 }
 
+// Resume Management Functions
+function loadResumeData() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    const currentResumeDiv = document.getElementById('currentResume');
+    
+    if (resumeData.filename && resumeData.data) {
+        currentResumeDiv.innerHTML = `
+            <div class="resume-info">
+                <h4>Current Resume</h4>
+                <div class="resume-details">
+                    <p><strong>Filename:</strong> ${resumeData.filename}</p>
+                    <p><strong>Size:</strong> ${resumeData.size}</p>
+                    <p><strong>Uploaded:</strong> ${new Date(resumeData.uploadDate).toLocaleDateString()}</p>
+                </div>
+                <div class="resume-actions">
+                    <button type="button" class="btn btn-small" onclick="previewResume()">Preview</button>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeResume()">Remove</button>
+                </div>
+            </div>
+        `;
+    } else {
+        currentResumeDiv.innerHTML = '<p>No resume uploaded yet.</p>';
+    }
+}
+
+function saveResume(file) {
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+        showErrorMessage('resumeError', 'Please upload a PDF file only.');
+        return false;
+    }
+    
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        showErrorMessage('resumeError', 'File size must be less than 5MB.');
+        return false;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const resumeData = {
+            filename: file.name,
+            size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+            data: e.target.result,
+            uploadDate: new Date().toISOString()
+        };
+        
+        localStorage.setItem('resumeData', JSON.stringify(resumeData));
+        showSuccessMessage('resumeSuccess');
+        loadResumeData();
+    };
+    
+    reader.readAsDataURL(file);
+    return true;
+}
+
+function previewResume() {
+    const resumeData = JSON.parse(localStorage.getItem('resumeData') || '{}');
+    
+    if (resumeData.data) {
+        const newWindow = window.open();
+        newWindow.document.write(`
+            <html>
+                <head><title>Resume Preview</title></head>
+                <body style="margin:0;">
+                    <embed src="${resumeData.data}" type="application/pdf" width="100%" height="100%">
+                </body>
+            </html>
+        `);
+    } else {
+        alert('No resume available to preview.');
+    }
+}
+
+function removeResume() {
+    if (confirm('Are you sure you want to remove the current resume?')) {
+        localStorage.removeItem('resumeData');
+        loadResumeData();
+        showSuccessMessage('resumeSuccess');
+    }
+}
+
 // Utility functions
 function showSuccessMessage(elementId) {
     const element = document.getElementById(elementId);
