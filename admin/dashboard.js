@@ -455,3 +455,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+    // Resume form submission
+    document.getElementById('resumeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('resumeFile');
+        const file = fileInput.files[0];
+        
+        if (file) {
+            if (saveResume(file)) {
+                this.reset();
+            }
+        }
+    });
+    
