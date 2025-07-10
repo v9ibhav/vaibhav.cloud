@@ -473,6 +473,26 @@
             font-size: var(--fs-5);
         }
 
+        .error-message {
+            color: var(--bittersweet-shimmer);
+            background: var(--border-gradient-onyx);
+            padding: 15px;
+            border-radius: 14px;
+            margin-top: 15px;
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .error-message::before {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            background: var(--bg-gradient-jet);
+            border-radius: inherit;
+            z-index: -1;
+        }
+
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
@@ -509,6 +529,7 @@
             <button class="tab-btn" onclick="showTab('portfolio')">Portfolio Settings</button>
             <button class="tab-btn" onclick="showTab('personal')">Personal Info</button>
             <button class="tab-btn" onclick="showTab('skills')">Skills & Experience</button>
+            <button class="tab-btn" onclick="showTab('security')">Security Settings</button>
         </div>
 
         <!-- Blog Management Tab -->
@@ -661,6 +682,48 @@
                 <br><br>
                 <button type="submit" class="btn">Save Skills & Experience</button>
             </form>
+        </div>
+
+        <!-- Security Settings Tab -->
+        <div id="security" class="tab-content">
+            <h2>Security Settings</h2>
+            <div class="success-message" id="securitySuccess">Password changed successfully!</div>
+            
+            <form id="passwordForm">
+                <h3>Change Admin Password</h3>
+                
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required minlength="6">
+                </div>
+                
+                <button type="submit" class="btn">Change Password</button>
+                
+                <div id="passwordError" class="error-message hidden">
+                    <!-- Error messages will appear here -->
+                </div>
+            </form>
+            
+            <div style="margin-top: 40px; padding: 20px; background: var(--border-gradient-onyx); border-radius: 14px; position: relative; z-index: 1;">
+                <div style="position: absolute; inset: 1px; background: var(--bg-gradient-jet); border-radius: inherit; z-index: -1;"></div>
+                <h3 style="color: var(--orange-yellow-crayola); margin-bottom: 10px;">Security Tips</h3>
+                <ul style="color: var(--light-gray); font-size: var(--fs-6); line-height: 1.6;">
+                    <li>• Use a strong password with at least 8 characters</li>
+                    <li>• Include uppercase, lowercase, numbers, and special characters</li>
+                    <li>• Don't use common words or personal information</li>
+                    <li>• Change your password regularly</li>
+                </ul>
+            </div>
         </div>
     </div>
 

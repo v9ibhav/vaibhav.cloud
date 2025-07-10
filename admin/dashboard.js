@@ -28,6 +28,11 @@ function logout() {
 
 // Initialize data storage
 function initializeStorage() {
+    // Initialize admin password if not set
+    if (!localStorage.getItem('adminPassword')) {
+        localStorage.setItem('adminPassword', 'Uvuvuv@49');
+    }
+    
     if (!localStorage.getItem('blogPosts')) {
         localStorage.setItem('blogPosts', JSON.stringify([]));
     }
@@ -294,6 +299,42 @@ function showSuccessMessage(elementId) {
     }, 3000);
 }
 
+function showErrorMessage(elementId, message) {
+    const element = document.getElementById(elementId);
+    element.textContent = message;
+    element.style.display = 'block';
+    setTimeout(() => {
+        element.style.display = 'none';
+    }, 5000);
+}
+
+function changePassword(currentPassword, newPassword, confirmPassword) {
+    const storedPassword = localStorage.getItem('adminPassword');
+    
+    // Validate current password
+    if (currentPassword !== storedPassword) {
+        showErrorMessage('passwordError', 'Current password is incorrect.');
+        return false;
+    }
+    
+    // Validate new password
+    if (newPassword.length < 6) {
+        showErrorMessage('passwordError', 'New password must be at least 6 characters long.');
+        return false;
+    }
+    
+    // Validate password confirmation
+    if (newPassword !== confirmPassword) {
+        showErrorMessage('passwordError', 'New password and confirmation do not match.');
+        return false;
+    }
+    
+    // Save new password
+    localStorage.setItem('adminPassword', newPassword);
+    showSuccessMessage('securitySuccess');
+    return true;
+}
+
 function updateMainWebsiteBlog() {
     // This function would update the main website's blog section
     // For now, we'll just store the data in localStorage
@@ -397,5 +438,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         localStorage.setItem('skillsData', JSON.stringify(skillsData));
         showSuccessMessage('skillsSuccess');
+    });
+    
+    // Password form submission
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        const currentPassword = formData.get('currentPassword');
+        const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
+        
+        if (changePassword(currentPassword, newPassword, confirmPassword)) {
+            this.reset();
+        }
     });
 });

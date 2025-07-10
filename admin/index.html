@@ -260,7 +260,9 @@
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
             
-            if (password === 'Uvuvuv@49') {
+            const storedPassword = localStorage.getItem('adminPassword') || 'Uvuvuv@49';
+            
+            if (password === storedPassword) {
                 // Store login state
                 localStorage.setItem('adminLoggedIn', 'true');
                 // Redirect to dashboard
