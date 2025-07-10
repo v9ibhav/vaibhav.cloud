@@ -348,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlogPosts();
     loadPortfolioData();
     loadSkillsData();
+    loadResumeData();
     
     // Blog form submission
     document.getElementById('blogForm').addEventListener('submit', function(e) {

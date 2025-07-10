@@ -493,6 +493,64 @@
             z-index: -1;
         }
 
+        .resume-preview {
+            background: var(--border-gradient-onyx);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .resume-preview::before {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            background: var(--bg-gradient-jet);
+            border-radius: inherit;
+            z-index: -1;
+        }
+
+        .resume-preview h3 {
+            color: var(--white-2);
+            margin-bottom: 15px;
+            font-size: var(--fs-4);
+        }
+
+        .resume-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .resume-info ion-icon {
+            font-size: 32px;
+            color: var(--orange-yellow-crayola);
+        }
+
+        .resume-details {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .resume-name {
+            display: block;
+            color: var(--white-2);
+            font-weight: var(--fw-500);
+            margin-bottom: 5px;
+        }
+
+        .resume-size {
+            display: block;
+            color: var(--light-gray-70);
+            font-size: var(--fs-7);
+        }
+
+        .file-input-label ion-icon {
+            color: var(--orange-yellow-crayola);
+        }
+
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
@@ -529,6 +587,7 @@
             <button class="tab-btn" onclick="showTab('portfolio')">Portfolio Settings</button>
             <button class="tab-btn" onclick="showTab('personal')">Personal Info</button>
             <button class="tab-btn" onclick="showTab('skills')">Skills & Experience</button>
+            <button class="tab-btn" onclick="showTab('resume')">Resume Upload</button>
             <button class="tab-btn" onclick="showTab('security')">Security Settings</button>
         </div>
 
@@ -682,6 +741,53 @@
                 <br><br>
                 <button type="submit" class="btn">Save Skills & Experience</button>
             </form>
+        </div>
+
+        <!-- Resume Upload Tab -->
+        <div id="resume" class="tab-content">
+            <h2>Resume Management</h2>
+            <div class="success-message" id="resumeSuccess">Resume uploaded successfully!</div>
+            
+            <form id="resumeForm">
+                <div class="form-group">
+                    <label for="resumeFile">Upload Resume (PDF)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="resumeFile" name="resume" class="file-input" accept=".pdf" required>
+                        <label for="resumeFile" class="file-input-label">
+                            <ion-icon name="cloud-upload-outline" style="font-size: 24px; margin-bottom: 10px;"></ion-icon>
+                            <span>Click to upload PDF resume or drag and drop</span>
+                            <small style="display: block; margin-top: 5px; color: var(--light-gray-70);">Maximum file size: 5MB</small>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="resumePreview" class="resume-preview" style="display: none;">
+                    <h3>Current Resume</h3>
+                    <div class="resume-info">
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <div class="resume-details">
+                            <span class="resume-name" id="resumeName"></span>
+                            <span class="resume-size" id="resumeSize"></span>
+                        </div>
+                        <button type="button" class="btn btn-small" onclick="previewResume()">Preview</button>
+                        <button type="button" class="btn btn-danger btn-small" onclick="removeResume()">Remove</button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Upload Resume</button>
+            </form>
+            
+            <div style="margin-top: 40px; padding: 20px; background: var(--border-gradient-onyx); border-radius: 14px; position: relative; z-index: 1;">
+                <div style="position: absolute; inset: 1px; background: var(--bg-gradient-jet); border-radius: inherit; z-index: -1;"></div>
+                <h3 style="color: var(--orange-yellow-crayola); margin-bottom: 10px;">Resume Guidelines</h3>
+                <ul style="color: var(--light-gray); font-size: var(--fs-6); line-height: 1.6;">
+                    <li>• Upload only PDF files for best compatibility</li>
+                    <li>• Keep file size under 5MB for faster loading</li>
+                    <li>• Use a professional filename (e.g., "FirstName_LastName_Resume.pdf")</li>
+                    <li>• Ensure the resume is up-to-date with your latest information</li>
+                    <li>• The resume will be available for download on the main website</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Security Settings Tab -->

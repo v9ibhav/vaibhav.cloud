@@ -136,6 +136,23 @@ for (let i = 0; i < formInputs.length; i++) {
 
 
 
+// Resume download functionality
+function downloadResume() {
+  const resumeUrl = localStorage.getItem('resumeUrl');
+  
+  if (resumeUrl) {
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = resumeUrl;
+    link.download = 'Vaibhav_Katiyar_Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    alert('Resume not available. Please contact the admin to upload a resume.');
+  }
+}
+
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
