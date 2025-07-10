@@ -7,10 +7,10 @@ class HashnodeBlog {
 
   async fetchPosts() {
     const query = `
-      query GetUserArticles($page: Int!) {
+      query GetUserArticles {
         user(username: "vaibhavkatiyar") {
           publications {
-            posts(page: $page) {
+            posts {
               title
               brief
               slug
@@ -31,7 +31,6 @@ class HashnodeBlog {
         },
         body: JSON.stringify({
           query: query,
-          variables: { page: 0 }
         })
       });
 
