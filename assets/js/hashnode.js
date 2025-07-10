@@ -43,7 +43,7 @@ class HashnodeBlog {
       }
 
       return data.data?.user?.publication?.posts || [];
-      return data.data?.user?.publications?.posts || [];
+      return data.data?.user?.publications[0]?.posts || [];
     } catch (error) {
       console.error('Error fetching Hashnode posts:', error);
       return [];
