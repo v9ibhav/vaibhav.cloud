@@ -135,7 +135,7 @@ class HashnodeBlog {
 
 // Initialize and load blog posts when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-  const hashnodeBlog = new HashnodeBlog('vaibhavkatiyar.hashnode.dev');
+  const hashnodeBlog = new HashnodeBlog('blogs.vaibhav.cloud');
   
   // Load posts immediately
   hashnodeBlog.renderPosts();
