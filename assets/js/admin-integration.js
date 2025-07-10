@@ -91,9 +91,9 @@ class AdminDataLoader {
         }
 
         // Update social links
-        if (personalData.facebook) {
-            const facebookLink = document.querySelector('a[href*="facebook"]');
-            if (facebookLink) facebookLink.href = personalData.facebook;
+        if (personalData.linkedin) {
+            const linkedinLink = document.querySelector('a[href*="linkedin"]');
+            if (linkedinLink) linkedinLink.href = personalData.linkedin;
         }
 
         if (personalData.twitter) {
