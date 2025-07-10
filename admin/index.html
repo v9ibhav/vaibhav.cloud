@@ -12,21 +12,107 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            background: var(--smoky-black);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--white-2);
+        }
+
+        :root {
+            /* Colors from main website */
+            --bg-gradient-onyx: linear-gradient(
+                to bottom right, 
+                hsl(240, 1%, 25%) 3%, 
+                hsl(0, 0%, 19%) 97%
+            );
+            --bg-gradient-jet: linear-gradient(
+                to bottom right, 
+                hsla(240, 1%, 18%, 0.251) 0%, 
+                hsla(240, 2%, 11%, 0) 100%
+            ), hsl(240, 2%, 13%);
+            --bg-gradient-yellow-1: linear-gradient(
+                to bottom right, 
+                hsl(45, 100%, 71%) 0%, 
+                hsla(36, 100%, 69%, 0) 50%
+            );
+            --bg-gradient-yellow-2: linear-gradient(
+                135deg, 
+                hsla(45, 100%, 71%, 0.251) 0%, 
+                hsla(35, 100%, 68%, 0) 59.86%
+            ), hsl(240, 2%, 13%);
+            --border-gradient-onyx: linear-gradient(
+                to bottom right, 
+                hsl(0, 0%, 25%) 0%, 
+                hsla(0, 0%, 25%, 0) 50%
+            );
+            --text-gradient-yellow: linear-gradient(
+                to right, 
+                hsl(45, 100%, 72%), 
+                hsl(35, 100%, 68%)
+            );
+
+            --jet: hsl(0, 0%, 22%);
+            --onyx: hsl(240, 1%, 17%);
+            --eerie-black-1: hsl(240, 2%, 13%);
+            --eerie-black-2: hsl(240, 2%, 12%);
+            --smoky-black: hsl(0, 0%, 7%);
+            --white-1: hsl(0, 0%, 100%);
+            --white-2: hsl(0, 0%, 98%);
+            --orange-yellow-crayola: hsl(45, 100%, 72%);
+            --vegas-gold: hsl(45, 54%, 58%);
+            --light-gray: hsl(0, 0%, 84%);
+            --light-gray-70: hsla(0, 0%, 84%, 0.7);
+            --bittersweet-shimmer: hsl(0, 43%, 51%);
+
+            /* Typography */
+            --ff-poppins: 'Poppins', sans-serif;
+            --fs-1: 24px;
+            --fs-2: 18px;
+            --fs-3: 17px;
+            --fs-4: 16px;
+            --fs-5: 15px;
+            --fs-6: 14px;
+            --fs-7: 13px;
+            --fs-8: 11px;
+            --fw-300: 300;
+            --fw-400: 400;
+            --fw-500: 500;
+            --fw-600: 600;
+
+            /* Shadows */
+            --shadow-1: -4px 8px 24px hsla(0, 0%, 0%, 0.25);
+            --shadow-2: 0 16px 30px hsla(0, 0%, 0%, 0.25);
+            --shadow-3: 0 16px 40px hsla(0, 0%, 0%, 0.25);
+            --shadow-4: 0 25px 50px hsla(0, 0%, 0%, 0.15);
+            --shadow-5: 0 24px 80px hsla(0, 0%, 0%, 0.25);
+
+            /* Transitions */
+            --transition-1: 0.25s ease;
+            --transition-2: 0.5s ease-in-out;
         }
 
         .login-container {
-            background: white;
+            background: var(--eerie-black-2);
+            border: 1px solid var(--jet);
+            border-radius: 20px;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-1);
             width: 100%;
             max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container::before {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            background: var(--bg-gradient-jet);
+            border-radius: inherit;
+            z-index: -1;
         }
 
         .login-header {
@@ -35,14 +121,30 @@
         }
 
         .login-header h1 {
-            color: #333;
-            font-size: 28px;
+            color: var(--white-2);
+            font-size: var(--fs-1);
+            font-weight: var(--fw-600);
             margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 7px;
+        }
+
+        .login-header h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--text-gradient-yellow);
+            border-radius: 3px;
         }
 
         .login-header p {
-            color: #666;
-            font-size: 14px;
+            color: var(--light-gray-70);
+            font-size: var(--fs-6);
+            font-weight: var(--fw-300);
         }
 
         .form-group {
@@ -52,51 +154,82 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
+            color: var(--white-2);
+            font-weight: var(--fw-500);
+            font-size: var(--fs-6);
         }
 
         .form-group input {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            border: 1px solid var(--jet);
+            border-radius: 14px;
+            font-size: var(--fs-6);
+            font-family: var(--ff-poppins);
+            background: var(--eerie-black-1);
+            color: var(--white-2);
+            transition: border-color var(--transition-1);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--orange-yellow-crayola);
+        }
+
+        .form-group input::placeholder {
+            color: var(--light-gray-70);
+            font-weight: var(--fw-300);
         }
 
         .login-btn {
+            position: relative;
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--border-gradient-onyx);
+            color: var(--orange-yellow-crayola);
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 13px 20px;
+            border-radius: 14px;
+            font-size: var(--fs-6);
+            font-weight: var(--fw-600);
+            font-family: var(--ff-poppins);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: var(--transition-1);
+            z-index: 1;
+            box-shadow: var(--shadow-3);
+        }
+
+        .login-btn::before {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            background: var(--bg-gradient-jet);
+            border-radius: inherit;
+            z-index: -1;
+            transition: var(--transition-1);
         }
 
         .login-btn:hover {
-            transform: translateY(-2px);
+            background: var(--bg-gradient-yellow-1);
+        }
+
+        .login-btn:hover::before {
+            background: var(--bg-gradient-yellow-2);
         }
 
         .error-message {
-            color: #e74c3c;
+            color: var(--bittersweet-shimmer);
             text-align: center;
             margin-top: 15px;
-            font-size: 14px;
+            font-size: var(--fs-7);
+            font-weight: var(--fw-400);
         }
 
         .hidden {
             display: none;
         }
+
+        /* Import Poppins font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
     </style>
 </head>
 <body>
@@ -109,7 +242,7 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" placeholder="Enter admin password" required>
             </div>
             
             <button type="submit" class="login-btn">Login</button>

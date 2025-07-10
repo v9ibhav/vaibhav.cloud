@@ -125,7 +125,7 @@ function loadPortfolioData() {
     const projects = portfolioData.projects || [];
     
     projectsList.innerHTML = projects.map((project, index) => `
-        <div class="form-group" style="border: 1px solid #e1e5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <div class="project-item-container">
             <h4>Project ${index + 1}</h4>
             <div class="grid">
                 <div class="form-group">
@@ -179,7 +179,7 @@ function loadSkillsData() {
     const skillsList = document.getElementById('skillsList');
     const skills = skillsData.skills || [];
     skillsList.innerHTML = skills.map((skill, index) => `
-        <div class="form-group" style="border: 1px solid #e1e5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div class="skill-item-container">
             <div class="grid">
                 <div class="form-group">
                     <label>Skill Name</label>
@@ -198,7 +198,7 @@ function loadSkillsData() {
     const educationList = document.getElementById('educationList');
     const education = skillsData.education || [];
     educationList.innerHTML = education.map((edu, index) => `
-        <div class="form-group" style="border: 1px solid #e1e5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div class="education-item-container">
             <div class="form-group">
                 <label>Institution</label>
                 <input type="text" name="eduInstitution_${index}" value="${edu.institution}" required>
@@ -219,7 +219,7 @@ function loadSkillsData() {
     const experienceList = document.getElementById('experienceList');
     const experience = skillsData.experience || [];
     experienceList.innerHTML = experience.map((exp, index) => `
-        <div class="form-group" style="border: 1px solid #e1e5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div class="experience-item-container">
             <div class="form-group">
                 <label>Job Title</label>
                 <input type="text" name="expTitle_${index}" value="${exp.title}" required>
